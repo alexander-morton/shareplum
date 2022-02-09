@@ -120,7 +120,7 @@ class _Folder():
                 "FileLeafRef": new_name
                 }
         headers = {'Accept': 'application/json;odata=verbose',
-                   'If-Match': odata_etag,
+                   'If-Match': '*',
                    'X-HTTP-Method': 'MERGE',
                    'Content-Type': 'application/json;odata=verbose',
                    'X-RequestDigest': self.contextinfo['FormDigestValue']
