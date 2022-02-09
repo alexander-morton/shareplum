@@ -107,3 +107,22 @@ class _Folder():
     def get_file_properties(self, file_name):
         file_properties= get(self._session, self.site_url + f"/_api/web/GetFileByServerRelativeUrl('{self.info['d']['ServerRelativeUrl']}/{file_name}')?/$expand=ListItemAllFields")
         return file_properties.json()
+
+    def rename_folder(self,new_name):
+        item_fields = get(self._session, self.site_url + f"/_api/web/GetFolderByServerRelativeUrl('{self.folder_name}')/ListItemAllFields")
+        odata_type = item_fields.json()['odata.type']
+        odata_id = item_fields.json()['odata.id']
+        odata_etag = item_fields.json()['odata.etag']
+        body = {"__metadata": {
+                    "type": odata_type
+                },
+                "Title": new_name,
+                "FileLeafRef": new_name
+                }
+        headers = {'Accept': 'application/json;odata=verbose',
+                   'If-Match': odata_etag,
+                   'X-HTTP-Method': 'MERGE',
+                   'Content-Type': 'application/json;odata=verbose',
+                   'X-RequestDigest': self.contextinfo['FormDigestValue']
+                   }
+        response = post(self._session, self.site_url + f"/_api/web/GetFolderByServerRelativeUrl('{self.folder_name}')/ListItemAllFields", headers=headers, json=body,timeout = self.timeout)
